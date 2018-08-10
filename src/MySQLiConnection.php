@@ -157,6 +157,8 @@ class MySQLiConnection extends Connection implements ConnectionInterface
             $statement = $this->prepared2($this->getMySqliForSelect($useRead)
                 ->prepare($query));
 
+            $this->bindValues($statement, $this->prepareBindings($bindings));
+
             $statement->execute();
 
             $result = $statement->get_result();
@@ -501,11 +503,26 @@ class MySQLiConnection extends Connection implements ConnectionInterface
      * Get the MySqli connection to use for a select query.
      *
      * @param  bool $useRead
-     * @return \mysqli
+     * @return \Dyrynda\Database\MySQLi
      */
     protected function getMySqliForSelect($useRead = true)
     {
         return $useRead ? $this->getReadMySqli() : $this->getMySqli();
+    }
+
+    /**
+     * Configure the mysqli prepared statement.
+     *
+     * @param  \mysqli_stmt $statement
+     * @return \mysqli_stmt
+     */
+    protected function prepared2(mysqli_stmt $statement)
+    {
+        $this->event(new StatementPrepared(
+            $this, $statement
+        ));
+
+        return $statement;
     }
 
     /**
