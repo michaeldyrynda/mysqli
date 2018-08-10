@@ -3,7 +3,7 @@
     "type": "library",
     "description": "MySQLi driver (connector) for Laravel 5.5 Eloquent database",
     "keywords": ["Laravel", "Lumen", "MySQL", "mysqli", "driver", "connector"],
-    "homepage": "http://github.com/puneet6313/laravel-mysqli",
+    "homepage": "http://github.com/michaeldyrynda/mysqli",
     "license": "MIT",
     "authors": [
         {
