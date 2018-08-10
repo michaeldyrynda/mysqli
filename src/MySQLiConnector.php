@@ -1,12 +1,12 @@
 <?php
 
-namespace LaravelEloquentMySQLi;
+namespace Dyrynda\Database;
 
+use mysqli;
 use Exception;
+use Illuminate\Support\Arr;
 use Illuminate\Database\Connectors\Connector;
 use Illuminate\Database\Connectors\ConnectorInterface;
-use Illuminate\Support\Arr;
-use mysqli;
 
 class MySQLiConnector extends Connector implements ConnectorInterface
 {
@@ -32,7 +32,7 @@ class MySQLiConnector extends Connector implements ConnectorInterface
         // connection's behavior, and some might be specified by the developers.
         $connection = $this->createConnection($dsn, $config, $options);
 
-        if (!empty($config['database'])) {
+        if (! empty($config['database'])) {
             $connection->query("use `{$config['database']}`;");
         }
 
@@ -68,11 +68,22 @@ class MySQLiConnector extends Connector implements ConnectorInterface
 
         try {
             return $this->createMySqliConnection(
-                $host, $username, $password, (int)$port, $database, $options
+                $host,
+                $username,
+                $password,
+                (int)$port,
+                $database,
+                $options
             );
         } catch (Exception $e) {
             return $this->tryAgainIfCausedByLostMySqliConnection(
-                $e, $host, $username, $password, (int)$port, $database, $options
+                $e,
+                $host,
+                $username,
+                $password,
+                (int)$port,
+                $database,
+                $options
             );
         }
     }
@@ -131,7 +142,7 @@ class MySQLiConnector extends Connector implements ConnectorInterface
      */
     protected function configureEncoding($connection, array $config)
     {
-        if (!isset($config['charset'])) {
+        if (! isset($config['charset'])) {
             return $connection;
         }
 
@@ -148,7 +159,7 @@ class MySQLiConnector extends Connector implements ConnectorInterface
      */
     protected function getCollation(array $config)
     {
-        return !is_null($config['collation']) ? " collate '{$config['collation']}'" : '';
+        return ! is_null($config['collation']) ? " collate '{$config['collation']}'" : '';
     }
 
     /**
@@ -188,7 +199,7 @@ class MySQLiConnector extends Connector implements ConnectorInterface
      */
     protected function hasSocket(array $config)
     {
-        return isset($config['unix_socket']) && !empty($config['unix_socket']);
+        return isset($config['unix_socket']) && ! empty($config['unix_socket']);
     }
 
     /**

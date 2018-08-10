@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelEloquentMySQLi;
+namespace Dyrynda\Database;
 
 use Illuminate\Database\Connection;
 use Illuminate\Support\ServiceProvider;
@@ -14,7 +14,7 @@ class MySQLiServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-
+        //
     }
 
     /**
@@ -38,7 +38,10 @@ class MySQLiServiceProvider extends ServiceProvider
 
         Connection::resolverFor('mysqli', function ($connection, $database, $prefix, $config) use ($app) {
             return new MySQLiConnection(
-                $connection(), $database, $prefix, $config
+                $connection(),
+                $database,
+                $prefix,
+                $config
             );
         });
 
@@ -48,6 +51,7 @@ class MySQLiServiceProvider extends ServiceProvider
 
         $this->app['db']->extend('mysqli', function (array $config, $name) use ($app) {
             $adapter = $app['db.connector.mysqli']->connect($config);
+
             return new MySQLiConnection($adapter, $config['database'], $config['prefix'], $config);
         });
     }

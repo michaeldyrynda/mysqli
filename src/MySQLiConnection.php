@@ -1,24 +1,22 @@
 <?php
 
-namespace LaravelEloquentMySQLi;
+namespace Dyrynda\Database;
 
-use Closure;
-use DateTimeInterface;
-use Exception;
-use Illuminate\Database\Concerns\ManagesTransactions;
-use Illuminate\Database\Connection;
-use Illuminate\Database\ConnectionInterface;
-use Illuminate\Database\DetectsDeadlocks;
-use Illuminate\Database\DetectsLostConnections;
-use Illuminate\Database\Events\StatementPrepared;
-use Illuminate\Database\Grammar;
-use Illuminate\Database\Query\Builder as QueryBuilder;
-use Illuminate\Database\Query\Expression;
-use Illuminate\Database\Query\Grammars\MySqlGrammar as QueryGrammar;
-use Illuminate\Database\Query\Processors\MySqlProcessor;
-use Illuminate\Database\Schema\Grammars\MySqlGrammar as SchemaGrammar;
-use Illuminate\Database\Schema\MySqlBuilder;
 use mysqli;
+use Closure;
+use Exception;
+use DateTimeInterface;
+use Illuminate\Database\Grammar;
+use Illuminate\Database\Connection;
+use Illuminate\Database\DetectsDeadlocks;
+use Illuminate\Database\Query\Expression;
+use Illuminate\Database\ConnectionInterface;
+use Illuminate\Database\Schema\MySqlBuilder;
+use Illuminate\Database\DetectsLostConnections;
+use Illuminate\Database\Concerns\ManagesTransactions;
+use Illuminate\Database\Query\Processors\MySqlProcessor;
+use Illuminate\Database\Query\Grammars\MySqlGrammar as QueryGrammar;
+use Illuminate\Database\Schema\Grammars\MySqlGrammar as SchemaGrammar;
 
 class MySQLiConnection extends Connection implements ConnectionInterface
 {
@@ -79,16 +77,6 @@ class MySQLiConnection extends Connection implements ConnectionInterface
     }
 
     /**
-     * Get the default query grammar instance.
-     *
-     * @return Grammar|\Illuminate\Database\Query\Grammars\MySqlGrammar
-     */
-    protected function getDefaultQueryGrammar()
-    {
-        return $this->withTablePrefix(new QueryGrammar());
-    }
-
-    /**
      * Get a schema builder instance for the connection.
      *
      * @return \Illuminate\Database\Schema\MySqlBuilder
@@ -103,16 +91,6 @@ class MySQLiConnection extends Connection implements ConnectionInterface
     }
 
     /**
-     * Get the default schema grammar instance.
-     *
-     * @return Grammar|\Illuminate\Database\Schema\Grammars\MySqlGrammar
-     */
-    protected function getDefaultSchemaGrammar()
-    {
-        return $this->withTablePrefix(new SchemaGrammar());
-    }
-
-    /**
      * Set the table prefix and return the grammar.
      *
      * @param  \Illuminate\Database\Grammar $grammar
@@ -123,21 +101,6 @@ class MySQLiConnection extends Connection implements ConnectionInterface
         $grammar->setTablePrefix($this->tablePrefix);
 
         return $grammar;
-    }
-
-    /**
-     * Get the default post processor instance.
-     *
-     * @return \Illuminate\Database\Query\Processors\MySqlProcessor
-     */
-    protected function getDefaultPostProcessor()
-    {
-        return new MySqlProcessor();
-    }
-
-    protected function getDoctrineDriver()
-    {
-        throw new Exception('Not implemented'); //return new DoctrineDriver;
     }
 
     /**
@@ -192,8 +155,6 @@ class MySQLiConnection extends Connection implements ConnectionInterface
             $statement = $this->prepared2($this->getMySqliForSelect($useRead)
                 ->prepare($query));
 
-            //$this->bindValues($statement, $this->prepareBindings($bindings));
-
             $statement->execute();
 
             $result = $statement->get_result();
@@ -203,20 +164,7 @@ class MySQLiConnection extends Connection implements ConnectionInterface
             }
 
             return [];
-
-            //return $statement->fetch_all(MYSQLI_ASSOC);
         });
-    }
-
-    /**
-     * Get the MySqli connection to use for a select query.
-     *
-     * @param  bool $useRead
-     * @return \mysqli
-     */
-    protected function getMySqliForSelect($useRead = true)
-    {
-        return $useRead ? $this->getReadMySqli() : $this->getMySqli();
     }
 
 
@@ -244,12 +192,6 @@ class MySQLiConnection extends Connection implements ConnectionInterface
             $statement = $this->prepared2($this->getMySqliForSelect($useReadPdo)
                 ->prepare($query));
 
-            /*
-            $this->bindValues(
-                $statement, $this->prepareBindings($bindings)
-            );
-            */
-
             // Next, we'll execute the query against the database and return the statement
             // so we can return the cursor. The cursor will use a PHP generator to give
             // back one row at a time without using a bunch of memory to render them.
@@ -264,29 +206,6 @@ class MySQLiConnection extends Connection implements ConnectionInterface
         while ($record = $result->fetch_object()) {
             yield $record;
         }
-
-        /*
-        while ($record = $statement->fetch()) {
-            yield $record;
-        }
-        */
-    }
-
-    /**
-     * Configure the mysqli prepared statement.
-     *
-     * @param  \mysqli_stmt $statement
-     * @return \mysqli_stmt
-     */
-    protected function prepared2(\mysqli_stmt $statement)
-    {
-        //$statement->setFetchMode($this->fetchMode);
-
-        $this->event(new StatementPrepared(
-            $this, $statement
-        ));
-
-        return $statement;
     }
 
     /**
@@ -306,10 +225,6 @@ class MySQLiConnection extends Connection implements ConnectionInterface
             $query = $this->buildSql($query, $this->prepareBindings($bindings));
 
             $statement = $this->getMySqli()->prepare($query);
-            dd($statement);
-            //
-
-            //$this->bindValues($statement, $this->prepareBindings($bindings));
 
             return $statement->execute();
         });
@@ -335,8 +250,6 @@ class MySQLiConnection extends Connection implements ConnectionInterface
             // by the statement and return that back to the developer. We'll first need
             // to execute the statement and then we'll use PDO to fetch the affected.
             $statement = $this->getMySqli()->prepare($query);
-
-            //$this->bindValues($statement, $this->prepareBindings($bindings));
 
             $statement->execute();
 
@@ -383,7 +296,7 @@ class MySQLiConnection extends Connection implements ConnectionInterface
         $types = '';
 
         foreach ($bindings as $key => $value) {
-            if (!is_string($key)) {
+            if (! is_string($key)) {
                 $types .= $this->getMySqliBindType($value);
             }
         }
@@ -423,18 +336,6 @@ class MySQLiConnection extends Connection implements ConnectionInterface
         }
 
         return $bindings;
-    }
-
-    /**
-     * Reconnect to the database if a PDO connection is missing.
-     *
-     * @return void
-     */
-    protected function reconnectIfMissingConnection()
-    {
-        if (is_null($this->mysqli)) {
-            $this->reconnect();
-        }
     }
 
     /**
@@ -560,6 +461,64 @@ class MySQLiConnection extends Connection implements ConnectionInterface
     }
 
     /**
+     * Get the default query grammar instance.
+     *
+     * @return Grammar|\Illuminate\Database\Query\Grammars\MySqlGrammar
+     */
+    protected function getDefaultQueryGrammar()
+    {
+        return $this->withTablePrefix(new QueryGrammar());
+    }
+
+    /**
+     * Get the default schema grammar instance.
+     *
+     * @return Grammar|\Illuminate\Database\Schema\Grammars\MySqlGrammar
+     */
+    protected function getDefaultSchemaGrammar()
+    {
+        return $this->withTablePrefix(new SchemaGrammar());
+    }
+
+    /**
+     * Get the default post processor instance.
+     *
+     * @return \Illuminate\Database\Query\Processors\MySqlProcessor
+     */
+    protected function getDefaultPostProcessor()
+    {
+        return new MySqlProcessor();
+    }
+
+    protected function getDoctrineDriver()
+    {
+        throw new Exception('Not implemented');
+    }
+
+    /**
+     * Get the MySqli connection to use for a select query.
+     *
+     * @param  bool $useRead
+     * @return \mysqli
+     */
+    protected function getMySqliForSelect($useRead = true)
+    {
+        return $useRead ? $this->getReadMySqli() : $this->getMySqli();
+    }
+
+    /**
+     * Reconnect to the database if a PDO connection is missing.
+     *
+     * @return void
+     */
+    protected function reconnectIfMissingConnection()
+    {
+        if (is_null($this->mysqli)) {
+            $this->reconnect();
+        }
+    }
+
+    /**
      * @param  mixed $value
      * @return string
      */
@@ -599,7 +558,7 @@ class MySQLiConnection extends Connection implements ConnectionInterface
             return array_map(__METHOD__, $inp);
         }
 
-        if (!empty($inp) && is_string($inp)) {
+        if (! empty($inp) && is_string($inp)) {
             return str_replace(['\\', "\0", "\n", "\r", "'", '"', "\x1a"], ['\\\\', '\\0', '\\n', '\\r', "\\'", '\\"', '\\Z'], $inp);
         }
 
@@ -618,7 +577,7 @@ class MySQLiConnection extends Connection implements ConnectionInterface
             return $value($this);
         }
 
-        if (!$type) {
+        if (! $type) {
             $type = gettype($value);
         }
 
@@ -686,7 +645,6 @@ class MySQLiConnection extends Connection implements ConnectionInterface
 
             foreach ($params as $key => $value) {
                 $trans[$key] = $this->quote($value);
-                //$builtSql = str_replace($key, $replacement, $builtSql);
             }
 
             return strtr($builtSql, $trans);
@@ -696,7 +654,6 @@ class MySQLiConnection extends Connection implements ConnectionInterface
             $offset = strpos($builtSql, '?');
 
             foreach ($params as $i => $param) {
-
                 if ($offset === false) {
                     throw new \LogicException("Param $i has no matching question mark \"?\" placeholder in specified SQL query.");
                 }
@@ -709,7 +666,6 @@ class MySQLiConnection extends Connection implements ConnectionInterface
             if ($offset !== false) {
                 throw new \LogicException('Not enough parameter bound to SQL query');
             }
-
         }
 
         return $builtSql;

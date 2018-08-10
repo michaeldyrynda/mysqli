@@ -1,5 +1,5 @@
 {
-    "name": "laravel-mysqli/laravel-mysqli-driver",
+    "name": "dyrynda/laravel-mysqli-driver",
     "type": "library",
     "description": "MySQLi driver (connector) for Laravel 5.5 Eloquent database",
     "keywords": ["Laravel", "Lumen", "MySQL", "mysqli", "driver", "connector"],
@@ -10,6 +10,11 @@
             "name": "Puneet Singh",
             "email": "puneet6313@gmail.com",
             "homepage": "https://github.com/puneet6313"
+        },
+        {
+            "name": "Michael Dyrynda",
+            "email": "michael@dyrynda.com.au",
+            "homepage": "https://dyrynda.com.au"
         }
     ],
 	"minimum-stability": "stable",
@@ -25,21 +30,16 @@
     },
     "autoload": {
         "psr-4": {
-            "laravel-mysqli\\LaravelEloquentMySQLi\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "laravel-mysqli\\LaravelEloquentMySQLi\\Tests\\": "tests/"
+            "Dyrynda\\Database\\": "src/"
         }
     },
 	"extra": {
     "laravel": {
         "providers": [
-            "laravel-mysqli\\LaravelEloquentMySQLi\\MySQLiServiceProvider"
+            "Dyrynda\\Database\\MySQLiServiceProvider"
         ],
         "aliases": {
-            "MySQLiConnection": "Mysqli\\LaravelEloquentMySQLi\\MySQLiConnector"
+            "MySQLiConnection": "Dyrynda\\Database\\MySQLiConnector"
         }
     }
 }
