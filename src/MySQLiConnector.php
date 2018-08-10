@@ -2,9 +2,9 @@
 
 namespace Dyrynda\Database;
 
-use mysqli;
 use Exception;
 use Illuminate\Support\Arr;
+use Dyrynda\Database\MySQLi;
 use Illuminate\Database\Connectors\Connector;
 use Illuminate\Database\Connectors\ConnectorInterface;
 
@@ -124,7 +124,7 @@ class MySQLiConnector extends Connector implements ConnectorInterface
      */
     protected function createMySqliConnection($host, $username, $password, $port, $database, $options)
     {
-        $connection = new mysqli($host, $username, $password, $database, $port);
+        $connection = new MySQLi($host, $username, $password, $database, $port);
 
         foreach ($options as $name => $value) {
             $connection->options($name, $value);

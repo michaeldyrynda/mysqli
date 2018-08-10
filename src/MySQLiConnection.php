@@ -65,7 +65,7 @@ class MySQLiConnection extends Connection implements ConnectionInterface
     /**
      * Create a new database connection instance.
      *
-     * @param  \mysqli|\Closure $mysqli
+     * @param  \Dyrynda\Database\MySQLi|\Closure $mysqli
      * @param  string $database
      * @param  string $tablePrefix
      * @param  array $config
@@ -363,7 +363,7 @@ class MySQLiConnection extends Connection implements ConnectionInterface
     /**
      * Get the current MySqli connection.
      *
-     * @return \mysqli
+     * @return \Dyrynda\Database\Dyrynda\Database\MySQLi
      */
     public function getMySqli()
     {
@@ -377,7 +377,7 @@ class MySQLiConnection extends Connection implements ConnectionInterface
     /**
      * Get the current MySqli connection used for reading.
      *
-     * @return \mysqli
+     * @return \Dyrynda\Database\MySQLi
      */
     public function getReadMySqli()
     {
@@ -395,7 +395,7 @@ class MySQLiConnection extends Connection implements ConnectionInterface
     /**
      * Set the MySqli connection.
      *
-     * @param  \mysqli|null $mysqli
+     * @param  \Dyrynda\Database\MySQLi|null $mysqli
      * @return $this
      */
     public function setMySqli($mysqli)
@@ -410,7 +410,7 @@ class MySQLiConnection extends Connection implements ConnectionInterface
     /**
      * Set the mysqli connection used for reading.
      *
-     * @param  \mysqli|null $mysqli
+     * @param  \Dyrynda\Database\MySQLi|null $mysqli
      * @return $this
      */
     public function setReadMySqli($mysqli)
@@ -423,7 +423,7 @@ class MySQLiConnection extends Connection implements ConnectionInterface
     /**
      * Get the current PDO connection.
      *
-     * @return \mysqli
+     * @return \Dyrynda\Database\MySQLi
      */
     public function getPdo()
     {
@@ -433,7 +433,7 @@ class MySQLiConnection extends Connection implements ConnectionInterface
     /**
      * Get the current PDO connection used for reading.
      *
-     * @return \mysqli
+     * @return \Dyrynda\Database\MySQLi
      */
     public function getReadPdo()
     {
@@ -443,7 +443,7 @@ class MySQLiConnection extends Connection implements ConnectionInterface
     /**
      * Set the PDO connection.
      *
-     * @param  \mysqli|null  $mysqli
+     * @param  \Dyrynda\Database\MySQLi|null  $mysqli
      * @return $this
      */
     public function setPdo($mysqli)
@@ -454,7 +454,7 @@ class MySQLiConnection extends Connection implements ConnectionInterface
     /**
      * Set the PDO connection used for reading.
      *
-     * @param  \mysqli|null  $mysqli
+     * @param  \Dyrynda\Database\MySQLi|null  $mysqli
      * @return $this
      */
     public function setReadPdo($mysqli)
